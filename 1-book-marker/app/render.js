@@ -19,7 +19,31 @@ newLinkForm.addEventListener("submit", event => {
   fetch(url)
     .then(res => res.text())
     .then(parseResponseText)
-    .then(findTitle);
+    .then(findTitle)
+    .then(title => storeLink(title, url))
+    .then(clearForm)
+    .then(renderLinks);
 });
+clearStorageButton.addEventListener('click', () => clearStorage())
 const parseResponseText = text => parser.parseFromString(text, "text/html");
 const findTitle = nodes => nodes.querySelector("title").innerText;
+const storeLink = (title, url) => {
+  localStorage.setItem(url, JSON.stringify({ title, url }));
+};
+const getLink = () =>
+  Object.keys(localStorage).map(key => JSON.parse(localStorage.getItem(key)));
+const getItemElement = link => `
+<div class="link">
+<h3>${link.title}</h3>
+<p><a href="${link.url}">${link.url}</a></p>
+</div>
+`;
+const renderLinks = () =>
+  (linksSection.innerHTML = getLink()
+    .map(getItemElement)
+    .join(""));
+const clearStorage = () => {
+    localStorage.clear()
+    linksSection.innerHTML = ''
+}
+renderLinks()
