@@ -1,0 +1,13 @@
+{
+  "name": "2-notes",
+  "version": "1.0.0",
+  "main": "./app/main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^4.0.6",
+    "marked": "^0.6.1"
+  }
+}
