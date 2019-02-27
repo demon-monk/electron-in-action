@@ -1,3 +1,4 @@
+const {shell} = require('electron')
 const parser = new DOMParser();
 
 const linksSection = document.querySelector(".links");
@@ -7,6 +8,12 @@ const newLinkUrl = document.querySelector(".new-link-url");
 const newLinkSubmit = document.querySelector(".new-link-submit");
 const clearStorageButton = document.querySelector(".clear-storage");
 
+linksSection.addEventListener('click', (event) => {
+    if (event.target.href) {
+        event.preventDefault()
+        shell.openExternal(event.target.href)
+    }
+})
 newLinkUrl.addEventListener("keyup", () => {
   newLinkSubmit.disabled = !newLinkUrl.validity.valid;
 });
