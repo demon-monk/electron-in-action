@@ -8,14 +8,13 @@ app.on('ready', () => {
     mainWindow.loadFile(path.join(__dirname, 'index.html'))
     mainWindow.once('ready-to-show', () => {
         mainWindow.show()
-        getFileFromUser()
     })
     mainWindow.on('closed', () => {
         mainWindow = null
     })
 })
 
-const getFileFromUser = () => {
+const getFileFromUser = exports.getFileFromUser = () => {
     const files = dialog.showOpenDialog({
         // other options: openDirectory, multiselections
         properties: ['openFile'],
