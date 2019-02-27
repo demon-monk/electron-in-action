@@ -17,12 +17,14 @@ newLinkForm.addEventListener("submit", event => {
   event.preventDefault();
   const url = newLinkUrl.value;
   fetch(url)
+    .then(validateResponse)
     .then(res => res.text())
     .then(parseResponseText)
     .then(findTitle)
     .then(title => storeLink(title, url))
     .then(clearForm)
-    .then(renderLinks);
+    .then(renderLinks)
+    .catch(err => handleError(err, url))
 });
 clearStorageButton.addEventListener('click', () => clearStorage())
 const parseResponseText = text => parser.parseFromString(text, "text/html");
@@ -45,5 +47,16 @@ const renderLinks = () =>
 const clearStorage = () => {
     localStorage.clear()
     linksSection.innerHTML = ''
+}
+const handleError = (err, url) => {
+    errorMessage.innerHTML = `There was an issue adding "${url}": ${err.message.trim()}`
+    setTimeout(() => errorMessage.innerText = null, 5000)
+}
+const validateResponse = (response) => {
+    console.log(response)
+    if (response.ok) {
+        return response
+    }
+    throw new Error(`Status code of ${response.status}: ${response.statusText}`)
 }
 renderLinks()
