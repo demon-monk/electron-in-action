@@ -22,6 +22,15 @@ app.on('activate', (event, hasVisibleWindows) => {
     }
 })
 
+app.on('will-finish-launching', () => {
+    app.on('open-file', (event, file) => {
+        const win = createWindow()
+        win.once('ready-to-show', () => {
+            openFile(win, file)
+        })
+    })
+})
+
 const createWindow = exports.createWindow = () => {
     let x, y
     const currentWindow = BrowserWindow.getFocusedWindow()
@@ -60,6 +69,7 @@ const getFileFromUser = exports.getFileFromUser = (targetWindow) => {
 
 const openFile = exports.openFile = (targetWindow, file) => {
     const content = fs.readFileSync(file, 'utf8')
+    app.addRecentDocument(file)
     targetWindow.setRepresentedFilename(file)
     targetWindow.webContents.send('file-opened', file, content)
 }
