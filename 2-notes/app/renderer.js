@@ -23,17 +23,24 @@ const renderMarkdownToHtml = (markdown) => {
     htmlView.innerHTML = marked(markdown, { sanitize: true })
 }
 
-const updateUserInterface = () => {
+const updateUserInterface = (isEdited) => {
     let title = 'Notes'
     if (filePath) {
         title = `${path.basename(filePath)} - ${title}`
     }
+    if (isEdited) {
+        title = `${title} (Edited)`
+    }
     currentWindow.setTitle(title)
+    currentWindow.setDocumentEdited(isEdited)
+    saveMarkdownButton.disabled = !isEdited
+    revertButton.disabled = !isEdited
 }
 
 markdownView.addEventListener('keyup', (event) => {
     const currentContent = event.target.value
     renderMarkdownToHtml(currentContent)
+    updateUserInterface(currentContent !== originContent)
 })
 
 openFileButton.addEventListener('click', () => {
