@@ -24,9 +24,12 @@ const getFileFromUser = exports.getFileFromUser = () => {
             { name: 'Text Files', extensions: ['txt'] },
         ],  
     })
-    if (!files) {
-        return
+    if (files && files[0]) {
+        openFile(files[0])
     }
-    const file = files[0]
+}
+
+const openFile = (file) => {
     const content = fs.readFileSync(file, 'utf8')
+    mainWindow.webContents.send('file-opened', file, content)
 }
