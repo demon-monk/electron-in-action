@@ -51,6 +51,10 @@ newFileButton.addEventListener('click', () => {
     mainProcess.createWindow()
 })
 
+saveHtmlButton.addEventListener('click', () => {
+    mainProcess.saveHtml(currentWindow, htmlView.innerHTML)
+})
+
 ipcRenderer.on('file-opened', (event, file, content) => {
     filePath = file
     originContent = content

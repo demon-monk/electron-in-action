@@ -73,3 +73,19 @@ const openFile = exports.openFile = (targetWindow, file) => {
     targetWindow.setRepresentedFilename(file)
     targetWindow.webContents.send('file-opened', file, content)
 }
+
+const saveHtml = exports.saveHtml = (targetWindow, content) => {
+    const file = dialog.showSaveDialog(targetWindow, {
+        title: 'Save HTML',
+        // can be set as 'home', 'desktop' ext. see 6.3.2
+        defaultPath: app.getPath('documents'),
+        filters: [{
+            name: 'HTML Files',
+            extensions: ['html', 'htm'],
+        }]
+    })
+    if (!file) {
+        return
+    }
+    fs.writeFileSync(file, content)
+}
