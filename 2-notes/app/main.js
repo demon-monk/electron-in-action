@@ -7,6 +7,21 @@ app.on('ready', () => {
     createWindow()
 })
 
+app.on('window-all-closed', () => {
+    // darwin, freebsd, linux, sunos, win32
+    if (process.platform === 'darwin') {
+        return false
+    }
+    app.quit()
+})
+
+// only fires on MacOS
+app.on('activate', (event, hasVisibleWindows) => {
+    if (!hasVisibleWindows) {
+        createWindow()
+    }
+})
+
 const createWindow = exports.createWindow = () => {
     let x, y
     const currentWindow = BrowserWindow.getFocusedWindow()
@@ -16,20 +31,6 @@ const createWindow = exports.createWindow = () => {
         y = currentWindowY + 20
     }
     let newWindow = new BrowserWindow({ x, y, show: false })
-    newWindow.loadFile(path.join(__dirname, 'index.html'))
-    newWindow.once('ready-to-show', () => {
-        newWindow.show()
-    })
-    newWindow.on('closed', () => {
-        windows.delete(newWindow)
-        newWindow = null
-    })
-    windows.add(newWindow)
-    return newWindow
-}
-
-const createWindow = exports.createWindow = () => {
-    let newWindow = new BrowserWindow({ show: false })
     newWindow.loadFile(path.join(__dirname, 'index.html'))
     newWindow.once('ready-to-show', () => {
         newWindow.show()
