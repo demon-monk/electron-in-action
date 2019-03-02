@@ -37,6 +37,15 @@ const updateUserInterface = (isEdited) => {
     revertButton.disabled = !isEdited
 }
 
+
+const renderFile = (file, content) => {
+    filePath = file
+    originContent = content
+    markdownView.value = content
+    renderMarkdownToHtml(content)
+    updateUserInterface(false)
+}
+
 // dragging, not dropped, can only get file metadata
 const getDraggedFile = event => {
     return event.dataTransfer.items[0]
@@ -107,9 +116,36 @@ markdownView.addEventListener('drop', event => {
 })
 
 ipcRenderer.on('file-opened', (event, file, content) => {
-    filePath = file
-    originContent = content
-    markdownView.value = content
-    renderMarkdownToHtml(content)
-    updateUserInterface()
+    if (currentWindow.isDocumentEdited()) {
+        const resulst = remote.dialog.showMessageBox(currentWindow, {
+            type: 'warning',
+            title: 'Overwrite current unsaved changes?',
+            message: 'Opening a new file in this window will overwrite your unsaved changes. Open this file anyway?',
+            buttons: [
+                'Yes',
+                'Cancel',
+            ],
+            defaultId: 0,
+            cancelId: 1,
+        })
+        if (result === 1) {
+            return
+        }
+    }
+    renderFile(file, content)
+})
+
+ipcRenderer.on('file-changed', (event, file, content) => {
+    const result = remote.dialog.showMessageBox(currentWindow, {
+        type: 'warning',
+        title: 'Overwirte Current Unsaved Changes?',
+        message: 'Another application has changed this file. Load changes?',
+        buttons: [
+            'Yes',
+            'Cancel',
+        ],
+        defaultId: 0,
+        cancelId: 1,
+    })
+    renderFile(file, content)
 })

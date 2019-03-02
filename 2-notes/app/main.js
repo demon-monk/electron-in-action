@@ -45,6 +45,25 @@ const createWindow = exports.createWindow = () => {
     newWindow.once('ready-to-show', () => {
         newWindow.show()
     })
+    newWindow.on('close', event => {
+        if (newWindow.isDocumentEdited()) {
+            event.preventDefault()
+            const result = dialog.showMessageBox(newWindow, {
+                type: 'warning',
+                title: 'Quit with Unsaved Changes',
+                message: 'Your changes will be lost if you do not save',
+                buttons: [
+                    'Quit Anyway',
+                    'Cancel',
+                ],
+                defaultId: 0,
+                cancelId: 1,
+            })
+            if (result === 0) {
+                newWindow.destroy()
+            }
+        }
+    })
     newWindow.on('closed', () => {
         windows.delete(newWindow)
         stopWatchingFile(newWindow)
