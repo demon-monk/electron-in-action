@@ -3,6 +3,7 @@ const path = require('path')
 const fs = require('fs')
 let mainWindow = null
 const windows = new Set()
+const openedFiles = new Map()
 app.on('ready', () => {
     createWindow()
 })
@@ -46,6 +47,7 @@ const createWindow = exports.createWindow = () => {
     })
     newWindow.on('closed', () => {
         windows.delete(newWindow)
+        stopWatchingFile(newWindow)
         newWindow = null
     })
     windows.add(newWindow)
@@ -106,4 +108,22 @@ const saveMarkdown = exports.saveMarkdown = (targetWindow, file, content) => {
     }
     fs.writeFileSync(file, content)
     openFile(targetWindow, file)
+}
+
+const startWatchingFile = (targetWindow, file) => {
+    stopWatchingFile(targetWindow)
+    const watcher = fs.watchFile(file, event => {
+        if (event === 'change') {
+            const content = fs.readFileSync(file)
+            targetWindow.webContents.send('file-opened', file, content)
+        }
+    })
+    openedFiles.set(targetWindow, watcher)
+}
+
+const stopWatchingFile = (targetWindow) => {
+    if (openedFiles.has(targetWindow)) {
+        openedFiles.get(targetWindow).stop()
+        openedFiles.delete(targetWindow)
+    }
 }
