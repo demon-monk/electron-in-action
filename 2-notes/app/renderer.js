@@ -1,6 +1,7 @@
 const marked = require('marked')
 const { remote, ipcRenderer } = require('electron')
 const path = require('path')
+const { Menu }  = remote
 
 const mainProcess = remote.require('./main')
 const currentWindow = remote.getCurrentWindow()
@@ -17,6 +18,15 @@ const revertButton = document.querySelector("#revert");
 const saveHtmlButton = document.querySelector("#save-html");
 const showFileButton = document.querySelector("#show-file");
 const openInDefaultButton = document.querySelector("#open-in-default");
+
+const markdownContextMenu = Menu.buildFromTemplate([
+    { label: 'Open File', click () { mainProcess.getFileFromUser() } },
+    { type: 'separator' },
+    { label: 'Cut', role: 'cut' },
+    { label: 'Copy', role: 'copy' },
+    { label: 'Paste', role: 'paste' },
+    { label: 'Select All', role: 'selectall' },
+])
 
 const renderMarkdownToHtml = (markdown) => {
     // sanitize is used for preventing script injection
@@ -113,6 +123,11 @@ markdownView.addEventListener('drop', event => {
         alert('This file type is not supported')
     }
     removeDropStyle()
+})
+
+markdownView.addEventListener('contextmenu', event => {
+    event.preventDefault()
+    markdownContextMenu.popup()
 })
 
 ipcRenderer.on('file-opened', (event, file, content) => {
