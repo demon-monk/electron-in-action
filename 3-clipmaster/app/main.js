@@ -1,6 +1,7 @@
 const path = require('path')
 const { app, Menu, Tray, systemPreferences } = require('electron')
 let tray = null
+const clippings = []
 
 const getIcon = () => {
     if (process.platform === 'win32') {
@@ -10,6 +11,23 @@ const getIcon = () => {
         return 'icon-light.png'
     }
     return 'icon-dark.png'
+}
+
+const updateMenu = () => {
+    const menu = Menu.buildFromTemplate([
+        {
+            label: 'Create New Clipping',
+            click() { return },
+        },
+        { type: 'separator' },
+        ...clippings.map((clipping, index) => ({ label: clipping })),
+        { type: 'separator' },
+        {
+            label: 'Quit',
+            click() { app.quit() },
+        }
+    ])
+    tray.setContextMenu(menu)
 }
 
 app.on('ready', () => {
@@ -26,6 +44,6 @@ app.on('ready', () => {
             click () { app.quit() },
         }
     ])
+    updateMenu()
     tray.setToolTip('Clipmaster')
-    tray.setContextMenu(menu)
 })
