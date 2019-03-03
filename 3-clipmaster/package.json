@@ -9,10 +9,10 @@
   "repository": "git@github.com:stevekinney/clipmaster.git",
   "author": "Steve Kinney <hello@stevekinney.net> (http://stevekinney.net)",
   "license": "MPLv2",
-  "dependencies": {
-    "electron": "1.8.2"
-  },
   "devDependencies": {
     "eslint": "4.17.0"
+  },
+  "dependencies": {
+    "electron": "^4.0.6"
   }
 }
