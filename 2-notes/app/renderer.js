@@ -79,16 +79,31 @@ const removeDropStyle = () => {
     markdownView.classList.remove('drag-error')
 }
 
-const markdownContextMenu = Menu.buildFromTemplate([
-    { label: 'Open File', click () { mainProcess.getFileFromUser() } },
-    { label: 'Show File in Folder', click: showFile },
-    { label: 'Open in Default Editor', click: openInDefaultApplication },
-    { type: 'separator' },
-    { label: 'Cut', role: 'cut' },
-    { label: 'Copy', role: 'copy' },
-    { label: 'Paste', role: 'paste' },
-    { label: 'Select All', role: 'selectall' },
-])
+const createContextMenu = () => {
+    return Menu.buildFromTemplate([
+        {
+            label: 'Open File',
+            click () {
+                mainProcess.getFileFromUser()
+            },
+        },
+        {
+            label: 'Show File in Folder',
+            click: showFile,
+            enabled: !!filePath,
+        },
+        {
+            label: 'Open in Default',
+            click: openInDefaultApplication,
+            enabled: !!filePath,
+        },
+        { type: 'separator' },
+        { label: 'Cut', role: 'cut' },
+        { label: 'Copy', role: 'copy' },
+        { label: 'Paste', role: 'paste' },
+        { label: 'Select All', role: 'selectall' }, 
+    ])
+}
 
 markdownView.addEventListener('keyup', (event) => {
     const currentContent = event.target.value
@@ -149,7 +164,7 @@ markdownView.addEventListener('drop', event => {
 
 markdownView.addEventListener('contextmenu', event => {
     event.preventDefault()
-    markdownContextMenu.popup()
+    createContextMenu().popup()
 })
 
 ipcRenderer.on('file-opened', (event, file, content) => {
