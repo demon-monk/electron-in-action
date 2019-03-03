@@ -3,6 +3,39 @@ const mainProcess = require('./main')
 
 const template = [
     {
+        label: 'File',
+        submenu: [
+            {
+                label: 'New File',
+                accelerator: 'CmdOrCtrl+N',
+                click() {
+                    mainProcess.createWindow()
+                },
+            },
+            {
+                label: 'Open File',
+                accelerator: 'CmdOrCtrl+O',
+                click (item, focusedWindow) {
+                    mainProcess.getFileFromUser(focusedWindow)
+                },
+            },
+            {
+                label: 'Save File',
+                accelerator: 'CmdOrCtrl+S',
+                click (item, focusedWindow) {
+                    focusedWindow.webContents.send('save-markdown')
+                },
+            },
+            {
+                label: 'Export HTML',
+                accelerator: 'Shift+CmdOrCtrl+S',
+                click (item, focusedWindow) {
+                    focusedWindow.webContents.send('save-html')
+                },
+            }
+        ]
+    },
+    {
         label: 'Edit',
         role: 'edit',
         submenu: [
