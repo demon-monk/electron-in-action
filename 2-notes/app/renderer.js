@@ -1,5 +1,5 @@
 const marked = require('marked')
-const { remote, ipcRenderer } = require('electron')
+const { remote, ipcRenderer, shell } = require('electron')
 const path = require('path')
 const { Menu }  = remote
 
@@ -53,7 +53,25 @@ const renderFile = (file, content) => {
     originContent = content
     markdownView.value = content
     renderMarkdownToHtml(content)
+
+    showFileButton.disabled = false
+    openInDefaultButton.disabled = false
+
     updateUserInterface(false)
+}
+
+const showFile = () => {
+    if (!filePath) {
+        return alert ('This file has not been saved to the file system')
+    }
+    shell.showItemInFolder(filePath)
+}
+
+const openInDefaultApplication = () => {
+    if (!filePath) {
+        return alert('This file has not been saved to the file system')
+    }
+    shell.openItem(filePath)
 }
 
 // dragging, not dropped, can only get file metadata
@@ -97,6 +115,9 @@ revertButton.addEventListener('click', () => {
     markdownView.value = originContent
     renderMarkdownToHtml(originContent)
 })
+
+showFileButton.addEventListener('click', showFile)
+openInDefaultButton.addEventListener('click', openInDefaultApplication)
 
 document.addEventListener('dragstart', event => event.preventDefault())
 document.addEventListener('dragover', event => event.preventDefault())
