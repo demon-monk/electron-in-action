@@ -19,15 +19,6 @@ const saveHtmlButton = document.querySelector("#save-html");
 const showFileButton = document.querySelector("#show-file");
 const openInDefaultButton = document.querySelector("#open-in-default");
 
-const markdownContextMenu = Menu.buildFromTemplate([
-    { label: 'Open File', click () { mainProcess.getFileFromUser() } },
-    { type: 'separator' },
-    { label: 'Cut', role: 'cut' },
-    { label: 'Copy', role: 'copy' },
-    { label: 'Paste', role: 'paste' },
-    { label: 'Select All', role: 'selectall' },
-])
-
 const renderMarkdownToHtml = (markdown) => {
     // sanitize is used for preventing script injection
     htmlView.innerHTML = marked(markdown, { sanitize: true })
@@ -88,6 +79,16 @@ const removeDropStyle = () => {
     markdownView.classList.remove('drag-error')
 }
 
+const markdownContextMenu = Menu.buildFromTemplate([
+    { label: 'Open File', click () { mainProcess.getFileFromUser() } },
+    { label: 'Show File in Folder', click: showFile },
+    { label: 'Open in Default Editor', click: openInDefaultApplication },
+    { type: 'separator' },
+    { label: 'Cut', role: 'cut' },
+    { label: 'Copy', role: 'copy' },
+    { label: 'Paste', role: 'paste' },
+    { label: 'Select All', role: 'selectall' },
+])
 
 markdownView.addEventListener('keyup', (event) => {
     const currentContent = event.target.value
