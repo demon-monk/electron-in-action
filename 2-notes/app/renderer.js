@@ -193,3 +193,7 @@ ipcRenderer.on('save-markdown', () => {
 ipcRenderer.on('save-html', () => {
     mainProcess.saveHtml(currentWindow, filePath, markdownView.value)
 })
+
+ipcRenderer.on('show-file', showFile)
+
+ipcRenderer.on('open-in-default', openInDefaultApplication)
