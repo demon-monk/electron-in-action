@@ -7,6 +7,22 @@ const template = [
         role: 'edit',
         submenu: [
             {
+                label: 'Undo',
+                accelerator: 'CommandOrControl+Z',
+                role: 'undo',
+            }, 
+            {
+                label: 'Redo',
+                accelerator: 'CmdOrCtrl+Z',
+                role: 'redo',
+            },
+            { type: 'separator' },
+            {
+                label: 'Cut',
+                accelerator: 'CommandOrControl+X',
+                role: 'cut',
+            },
+            {
                 label: 'Copy',
                 accelerator: 'CmdOrCtrl+C',
                 role: 'copy',
@@ -17,13 +33,89 @@ const template = [
                 role: 'paste'
             }
         ]
-    }
+    },
+    {
+        label: 'Window',
+        role: 'window',
+        submenu: [
+            {
+                label: 'Minimize',
+                accelerator: 'CmdOrCtrl+M',
+                role: 'minimize',
+            },
+            {
+                label: 'Close',
+                accelerator: 'CmdOrCtrl+W',
+                role: 'close',
+            }
+        ]
+    },
+    {
+        label: 'help',
+        role: 'help',
+        submenu: [
+            {
+                label: 'Visit Website',
+                click () { /* TODO: */ },
+            },
+            {
+                label: 'Toggle Developer Tools',
+                click (item, focusedWindow) {
+                    if (focusedWindow) {
+                        focusedWindow.webContents.toggleDevTools()
+                    }
+                },
+            },
+        ],
+    },
 ]
 if (process.platform === 'darwin') {
     const name = 'Notes'
     template.unshift({
-        label: name
+        label: name,
+        submenu: [
+            {
+                label: `About ${name}`,
+                role: 'about',
+            },
+            { type: 'separator' },
+            {
+                label: 'Services',
+                role: 'services',
+                submenu: [],
+            },
+            { type: 'separator' },
+            {
+                label: `Hide ${name}`,
+                accelerator: 'Cmd+H',
+                role: '',
+            },
+            {
+                label: 'Hide Others',
+                accelerator: 'Cmd+Alt+H',
+                role: 'hideothers',
+            },
+            {
+                label: 'Show All',
+                role: 'unhide',
+            },
+            { type: 'separator' },
+            {
+                label: `Quit ${name}`,
+                accelerator: 'Cmd+Q',
+                click() { app.quit() },
+            },
+        ],
     })
+    const windowMenu = template.find(item => item.label === 'Window')
+    windowMenu.role = 'window'
+    windowMenu.submenu.push(
+        { type: 'separator' },
+        {
+            label: 'Bring All to Front',
+            role: 'front',
+        }
+    )
 }
 
 module.exports = Menu.buildFromTemplate(template)
